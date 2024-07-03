@@ -1,0 +1,67 @@
+#include <GL/glut.h>
+
+int width = 500, height = 250;
+bool twoPointsClicked = false;
+int X1 = 0, X2 = 0, Y1 = 0, Y2 = 0;
+int timerStarted = false;
+
+void init(){
+    glClearColor(1,1,1,1);
+    gluOrtho2D(0, width,0, height);
+}
+
+void handleMouse(int button, int state, int x, int y){
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+        if (!X1 && !Y1){
+            X1 = x;
+            Y1 = height - y;
+        }
+        else if((X1 && Y1) && (!X2 && !Y2)){
+            X2 = x;
+            Y2 = height - y;
+            twoPointsClicked = true;
+        }
+    }
+    glutPostRedisplay();
+}
+
+void timer(int value){
+    X1 = X2 = Y1 = Y2 = 0;
+    twoPointsClicked = false;
+    timerStarted = false;
+    glutPostRedisplay();
+}
+
+void display(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0,0,0);
+    if (twoPointsClicked){
+        glBegin(GL_LINES);
+            glVertex2i(X1, Y1);
+            glVertex2i(X2, Y2);
+        glEnd();
+        timerStarted = true;
+
+        glutTimerFunc(5000, timer, 0);
+    }
+    glFlush();
+}
+
+
+int main(int argc, char ** argv){
+    glutInit(&argc, argv);
+
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+
+    glutInitWindowPosition(400, 400);
+    glutInitWindowSize(width, height);
+
+    glutCreateWindow("Mouse Lines");
+
+    init();
+    glutDisplayFunc(display);
+    glutMouseFunc(handleMouse);
+    glutMainLoop();
+
+    return 0;
+}

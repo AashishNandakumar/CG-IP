@@ -1,0 +1,237 @@
+#include <GL/glut.h>
+#include <cmath>
+
+
+
+// Global variables
+GLfloat red = 1.0, green = 1.0, blue = 1.0;  // Initial color
+int selectedOption;
+
+// Function to draw a parallelepiped by extruding a circle
+void drawCircleParallelepiped() {
+    int numSegments = 10;
+    GLfloat angle;
+    glColor3f(red, green, blue);
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, -0.5);
+
+    // Draw the base circle
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0, 0.0, 0.0);
+    for (int i = 0; i <= numSegments; i++) {
+        angle = i * 2.0 * 3.14159 / numSegments;
+        glVertex3f(cos(angle) * 0.5, sin(angle) * 0.5, 0.0);
+    }
+    glEnd();
+
+    // Draw the top circle
+    glTranslatef(0.0, 0.0, 1.0);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0, 0.0, 0.0);
+    for (int i = 0; i <= numSegments; i++) {
+        angle = i * 2.0 * 3.14159 / numSegments;
+        glVertex3f(cos(angle) * 0.5, sin(angle) * 0.5, 0.0);
+    }
+    glEnd();
+
+    // Draw the sides
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= numSegments; i++) {
+        angle = i * 2.0 * 3.14159 / numSegments;
+        glVertex3f(cos(angle) * 0.5, sin(angle) * 0.5, 0.0);
+        glVertex3f(cos(angle) * 0.5, sin(angle) * 0.5, -1.0);
+    }
+    glEnd();
+
+    glPopMatrix();
+
+}
+
+// Function to draw a parallelepiped by extruding a square
+void drawSquareParallelepiped() {
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, -0.5);
+
+    // Draw the base square
+    glBegin(GL_QUADS);
+    glVertex3f(-0.5, -0.5, 0.0);
+    glVertex3f(0.5, -0.5, 0.0);
+    glVertex3f(0.5, 0.5, 0.0);
+    glVertex3f(-0.5, 0.5, 0.0);
+    glEnd();
+
+    // Draw the top square
+    glTranslatef(0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex3f(-0.5, -0.5, 0.0);
+    glVertex3f(0.5, -0.5, 0.0);
+    glVertex3f(0.5, 0.5, 0.0);
+    glVertex3f(-0.5, 0.5, 0.0);
+    glEnd();
+
+    // Draw the sides
+    glBegin(GL_QUADS);
+    glVertex3f(-0.5, -0.5, 0.0);
+    glVertex3f(-0.5, 0.5, 0.0);
+    glVertex3f(-0.5, 0.5, -1.0);
+    glVertex3f(-0.5, -0.5, -1.0);
+
+    glVertex3f(0.5, -0.5, 0.0);
+    glVertex3f(0.5, 0.5, 0.0);
+    glVertex3f(0.5, 0.5, -1.0);
+    glVertex3f(0.5, -0.5, -1.0);
+
+    glVertex3f(-0.5, -0.5, 0.0);
+    glVertex3f(0.5, -0.5, 0.0);
+    glVertex3f(0.5, -0.5, -1.0);
+    glVertex3f(-0.5, -0.5, -1.0);
+
+    glVertex3f(-0.5, 0.5, 0.0);
+    glVertex3f(0.5, 0.5, 0.0);
+    glVertex3f(0.5, 0.5, -1.0);
+    glVertex3f(-0.5, 0.5, -1.0);
+    glEnd();
+
+    glPopMatrix();
+}
+
+// Function to draw a 2D mesh
+void draw2DMesh() {
+    int numRows = 10;
+    int numCols = 10;
+
+    glPushMatrix();
+    glTranslatef(-0.5, -0.5, 0.0);
+
+    glBegin(GL_LINES);
+    for (int i = 0; i <= numRows; i++) {
+        glVertex2f(0.0, i * 1.0 / numRows);
+        glVertex2f(1.0, i * 1.0 / numRows);
+    }
+    for (int i = 0; i <= numCols; i++) {
+        glVertex2f(i * 1.0 / numCols, 0.0);
+        glVertex2f(i * 1.0 / numCols, 1.0);
+    }
+    glEnd();
+
+    glPopMatrix();
+}
+
+// Function to handle keyboard events
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+        case 'r':
+        case 'R':
+            red = 1.0;
+            green = 0.0;
+            blue = 0.0;
+            break;
+        case 'g':
+        case 'G':
+            red = 0.0;
+            green = 1.0;
+            blue = 0.0;
+            break;
+        case 'b':
+        case 'B':
+            red = 0.0;
+            green = 0.0;
+            blue = 1.0;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+//// Function to handle menu events
+//void menu(int value) {
+//    switch (value) {
+//        case 1:
+//            drawCircleParallelepiped();
+//            break;
+//        case 2:
+//            drawSquareParallelepiped();
+//            break;
+//        case 3:
+//            draw2DMesh();
+//            break;
+//    }
+//    glutPostRedisplay();
+//}
+void menu(int value) {
+    switch (value) {
+        case 1:
+            selectedOption = 1;
+            break;
+        case 2:
+            selectedOption = 2;
+            break;
+        case 3:
+            selectedOption = 3;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+//// Function to display the objects
+//void display() {
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glColor3f(red, green, blue);
+//
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+//
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+//
+//    glutSwapBuffers();
+//}
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3f(red, green, blue);
+
+    // Call the appropriate drawing function based on the selected menu option
+    switch (selectedOption) {
+        case 1:
+            drawCircleParallelepiped();
+            break;
+        case 2:
+            drawSquareParallelepiped();
+            break;
+        case 3:
+            draw2DMesh();
+            break;
+    }
+
+    glutSwapBuffers();
+}
+
+// Function to handle reshape events
+void reshape(int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Interactive Drawing Application");
+
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+
+    // Create the menu
+    glutCreateMenu(menu);
+    glutAddMenuEntry("Draw parallelepiped by extruding circle", 1);
+    glutAddMenuEntry("Draw parallelepiped by extruding square", 2);
+    glutAddMenuEntry("Draw 2D mesh", 3);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glEnable(GL_DEPTH_TEST);
+
+    glutMainLoop();
+
+    return 0;
+}

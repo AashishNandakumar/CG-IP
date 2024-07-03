@@ -1,0 +1,188 @@
+#include <GL/glut.h>
+#include <cmath>
+
+// Global variables
+GLfloat red = 1.0, green = 1.0, blue = 1.0;  // Initial color
+int selectedShape = 0;  // 0: Triangle, 1: Square, 2: House
+GLfloat tx = 0.0, ty = 0.0;  // Translation factors
+GLfloat angle = 0.0;  // Rotation angle
+GLfloat sx = 1.0, sy = 1.0;  // Scaling factors
+
+// Function to draw a triangle
+void drawTriangle() {
+    glBegin(GL_TRIANGLES);
+    glVertex2f(-0.5, -0.5);
+    glVertex2f(0.5, -0.5);
+    glVertex2f(0.0, 0.5);
+    glEnd();
+}
+
+// Function to draw a square
+void drawSquare() {
+    glBegin(GL_QUADS);
+    glVertex2f(-0.5, -0.5);
+    glVertex2f(0.5, -0.5);
+    glVertex2f(0.5, 0.5);
+    glVertex2f(-0.5, 0.5);
+    glEnd();
+}
+
+// Function to draw a house
+void drawHouse() {
+    // Draw the square base
+    glBegin(GL_QUADS);
+    glVertex2f(-0.5, -0.5);
+    glVertex2f(0.5, -0.5);
+    glVertex2f(0.5, 0.0);
+    glVertex2f(-0.5, 0.0);
+    glEnd();
+
+    // Draw the triangular roof
+    glBegin(GL_TRIANGLES);
+    glVertex2f(-0.5, 0.0);
+    glVertex2f(0.5, 0.0);
+    glVertex2f(0.0, 0.5);
+    glEnd();
+}
+
+// Function to handle menu events
+void menu(int value) {
+    switch (value) {
+        case 1:
+            selectedShape = 0;
+            break;
+        case 2:
+            selectedShape = 1;
+            break;
+        case 3:
+            selectedShape = 2;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+// Function to handle translation submenu events
+void translationMenu(int value) {
+    switch (value) {
+        case 1:
+            tx += 0.1;
+            break;
+        case 2:
+            tx -= 0.1;
+            break;
+        case 3:
+            ty += 0.1;
+            break;
+        case 4:
+            ty -= 0.1;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+// Function to handle rotation submenu events
+void rotationMenu(int value) {
+    switch (value) {
+        case 1:
+            angle += 10.0;
+            break;
+        case 2:
+            angle -= 10.0;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+// Function to handle scaling submenu events
+void scalingMenu(int value) {
+    switch (value) {
+        case 1:
+            sx += 0.1;
+            sy += 0.1;
+            break;
+        case 2:
+            sx -= 0.1;
+            sy -= 0.1;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+// Function to display the objects
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(red, green, blue);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glTranslatef(tx, ty, 0.0);
+    glRotatef(angle, 0.0, 0.0, 1.0);
+    glScalef(sx, sy, 1.0);
+
+    switch (selectedShape) {
+        case 0:
+            drawTriangle();
+            break;
+        case 1:
+            drawSquare();
+            break;
+        case 2:
+            drawHouse();
+            break;
+    }
+
+    glutSwapBuffers();
+}
+
+// Function to handle reshape events
+void reshape(int width, int height) {
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("2D Transformations");
+
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+
+    // Create the main menu
+    int mainMenu = glutCreateMenu(menu);
+    glutAddMenuEntry("Triangle", 1);
+    glutAddMenuEntry("Square", 2);
+    glutAddMenuEntry("House", 3);
+    glutAttachMenu(GLUT_LEFT_BUTTON);
+
+    // Create the translation submenu
+    int translationSubMenu = glutCreateMenu(translationMenu);
+    glutAddMenuEntry("Translate +X", 1);
+    glutAddMenuEntry("Translate -X", 2);
+    glutAddMenuEntry("Translate +Y", 3);
+    glutAddMenuEntry("Translate -Y", 4);
+    glutSetMenu(mainMenu);
+    glutAddSubMenu("Translation", translationSubMenu);
+
+    // Create the rotation submenu
+    int rotationSubMenu = glutCreateMenu(rotationMenu);
+    glutAddMenuEntry("Rotate +10", 1);
+    glutAddMenuEntry("Rotate -10", 2);
+    glutSetMenu(mainMenu);
+    glutAddSubMenu("Rotation", rotationSubMenu);
+
+    // Create the scaling submenu
+    int scalingSubMenu = glutCreateMenu(scalingMenu);
+    glutAddMenuEntry("Scale Up", 1);
+    glutAddMenuEntry("Scale Down", 2);
+    glutSetMenu(mainMenu);
+    glutAddSubMenu("Scaling", scalingSubMenu);
+
+    glutMainLoop();
+
+    return 0;
+}
