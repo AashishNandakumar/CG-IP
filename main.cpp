@@ -1,3 +1,7 @@
+/*
+ * program 3: Demonstrate basic geometric operations on a 3D object
+ */
+
 #include<cstdlib>
 #include<GL/glut.h>
 #include<cmath>
@@ -40,10 +44,12 @@ void cube(float tx, float ty, float tz, float rx, float ry, float rz, float scal
     for (int i = 0; i < 8; i++) {
         float x = P[i][0], y = P[i][1], z = P[i][2], t;
 
+        // scaling
         x = x * scale + tx;
         y = y * scale + ty;
         z = z * scale + tz;
 
+        // rotation
         t = x * cos(rz) - y * sin(rz);
         y = x * sin(rz) + y * cos(rz);
         x = t;
@@ -56,33 +62,44 @@ void cube(float tx, float ty, float tz, float rx, float ry, float rz, float scal
         x = z * sin(ry) + x * cos(ry);
         z = t;
 
+        // translation
         P[i][0] = x + move_x;
         P[i][1] = y + move_y;
         P[i][2] = z + move_z;
     }
 
-    glColor3f(c, 0, 0);
-    face(P, 0, 1, 2, 3);
-    glColor3f(c, c, 0);
-    face(P, 0, 1, 5, 4);
+    // front face
     glColor3f(0, c, 0);
     face(P, 1, 2, 6, 5);
-    glColor3f(0, c, c);
-    face(P, 2, 3, 7, 6);
+
+    // back face
     glColor3f(0, 0, c);
     face(P, 3, 0, 4, 7);
+
+    // left face
+    glColor3f(c, c, 0);
+    face(P, 0, 1, 5, 4);
+
+    // right face
+    glColor3f(0, c, c);
+    face(P, 2, 3, 7, 6);
+
+    // top face
     glColor3f(c, 0, c);
     face(P, 4, 5, 6, 7);
+
+    // bottom face
+    glColor3f(c, 0, 0);
+    face(P, 0, 1, 2, 3);
 }
 
-void disp() {
+void display() {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glLoadIdentity();
     cube(0, 0, 0, 0, 0, 0, 0.1, 1.0);
-    //cube(0.5, 0, 0, 0, 0, 0, 0.2, 0.9);
-    //cube(0, 0.5, 0, 0, 0, 0, 0.2, 0.8);
-    //cube(0, 0, 0.5, 0, 0, 0, 0.2, 0.7);
+
     glutSwapBuffers();
 }
 
@@ -124,13 +141,17 @@ void keyboard(unsigned char key, int x, int y) {
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(300, 300);
-
     glutCreateWindow("3D Operation");
+
     init();
-    glutDisplayFunc(disp);
+
+    glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
+
     glutMainLoop();
+
     return 0;
 }

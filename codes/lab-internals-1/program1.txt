@@ -1,6 +1,6 @@
 /*
-    Draw a line using bresenham's line drawing algorithm
-*/
+ * program 1: Draw a line using bresenham's line drawing algorithm
+ */
 
 #include <GL/glut.h>
 #include <iostream>

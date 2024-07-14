@@ -1,6 +1,7 @@
 /*
- * 2D geometric operations on a 2D object using builtin-functions
+ * program 4: Demonstrate 2D transformations on basic objects
  */
+
 #include <GL/glut.h>
 #include <cstdlib>
 
@@ -13,6 +14,7 @@ void init() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(-10, 10, -10, 10);
+
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -26,7 +28,9 @@ void reshape(int w, int h) {
     } else {
         gluOrtho2D(-10, 10, -10 * w / h, 10 * w / h);
     }
+
     glMatrixMode(GL_MODELVIEW);
+
     glutPostRedisplay();
 }
 
@@ -52,7 +56,7 @@ void display() {
     glFlush();
 }
 
-void keyboard(unsigned char key, int x, int u) {
+void keyboard(unsigned char key, int x, int y) {
     switch (key) {
         case 'w':
             ty += 1;
@@ -85,6 +89,7 @@ void keyboard(unsigned char key, int x, int u) {
         case 27:
             exit(0);
     }
+
     glutPostRedisplay();
 }
 
@@ -104,5 +109,4 @@ int main(int argc, char **argv) {
     glutMainLoop();
 
     return 0;
-
 }
