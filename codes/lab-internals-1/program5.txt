@@ -1,0 +1,63 @@
+/*
+ * Demonstrate animations on simple objects
+ */
+
+#include <GL/glut.h>
+#include <cmath>
+
+float x, y, r = 50, theta = 0;
+bool rotationEnabled = false;
+
+void init() {
+    gluOrtho2D(-100, 100, -100, 100);
+}
+
+void idle() {
+    if (rotationEnabled) {
+        theta += 0.1;
+        if (theta == 360) theta = 0;
+    }
+    glutPostRedisplay();
+}
+
+void display() {
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0, 0, 0);
+
+    x = r * cos(theta * 3.14 / 180);
+    y = r * sin(theta * 3.14 / 180);
+
+    glBegin(GL_POLYGON);
+    glVertex2f(x, y);
+    glVertex2f(-y, x);
+    glVertex2f(-x, -y);
+    glVertex2f(y, -x);
+    glEnd();
+
+    glutSwapBuffers();
+}
+
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+        rotationEnabled = true;
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+        rotationEnabled = false;
+}
+
+int main(int argc, char **argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+
+    glutInitWindowPosition(400, 200);
+    glutCreateWindow("Animation effect on an object");
+
+    init();
+
+    glutDisplayFunc(display);
+    glutIdleFunc(idle);
+    glutMouseFunc(mouse);
+
+    glutMainLoop();
+    return 0;
+}

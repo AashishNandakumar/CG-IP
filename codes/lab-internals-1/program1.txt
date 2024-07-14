@@ -1,0 +1,79 @@
+/*
+    Draw a line using bresenham's line drawing algorithm
+*/
+
+#include <GL/glut.h>
+#include <iostream>
+#include <cmath>
+
+void setPixel(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+}
+
+void bresenhams(int x0, int y0, int xend, int yend) {
+    int dx = fabs(xend - x0);
+    int dy = fabs(yend - y0);
+
+    int p = 2 * (dy - dx);
+    int twoDy = 2 * dy;
+    int twoDyMinusDx = 2 * (dy - dx);
+
+    int x, y;
+
+    if (x0 > xend) {
+        x = xend;
+        y = yend;
+        xend = x0;
+    } else {
+        x = x0;
+        y = y0;
+    }
+
+    setPixel(x, y);
+
+    while (x < xend) {
+        x++;
+        if (p < 0) {
+            p += twoDy;
+        } else {
+            y++;
+            p += twoDyMinusDx;
+        }
+        setPixel(x, y);
+    }
+}
+
+void display() {
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1, 1, 1);
+
+    int x0 = 50, y0 = 50;
+    int xend = 200, yend = 300;
+
+    bresenhams(x0, y0, xend, yend);
+    glFlush();
+}
+
+void init() {
+    gluOrtho2D(0, 500, 0, 500);
+}
+
+int main(int argc, char ** argv){
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+
+    glutInitWindowSize(300, 300);
+    glutInitWindowPosition(400, 400);
+    glutCreateWindow("Bresenham's line drawing algorithm");
+
+    init();
+
+    glutDisplayFunc(display);
+    glutMainLoop();
+
+    return  0;
+}
+
