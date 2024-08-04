@@ -1,5 +1,5 @@
 /*
- * program 2: Demonstrate basic geometric operations on a 2D object
+ * program 2: Demonstrate basic geometric operations on a 2D object (without builtin functions)
  */
 
 #include <GL/glut.h>

@@ -1,5 +1,5 @@
 /*
- * program 4: Demonstrate 2D transformations on basic objects
+ * program 4: Demonstrate 2D transformations on basic objects (using builtin functions)
  */
 
 #include <GL/glut.h>
@@ -18,6 +18,7 @@ void init() {
     glMatrixMode(GL_MODELVIEW);
 }
 
+// to maintain the aspect ratio
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);

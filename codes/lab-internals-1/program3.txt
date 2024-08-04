@@ -1,12 +1,12 @@
 /*
- * program 3: Demonstrate basic geometric operations on a 3D object
+ * program 3: Demonstrate basic geometric operations on a 3D object (without builtin functions)
  */
 
 #include<cstdlib>
 #include<GL/glut.h>
 #include<cmath>
 
-double rot = 0, rot2 = 0, move_x = 0, move_y = 0, move_z = 0;
+float rot1 = 0, rot2 = 0, move_x = 0, move_y = 0, move_z = 0;
 
 void init() {
     glMatrixMode(GL_MODELVIEW);
@@ -24,25 +24,30 @@ void face(float P[8][3], int a, int b, int c, int d) {
 
 void cube(float tx, float ty, float tz, float rx, float ry, float rz, float scale, float c) {
     float P[8][3] = {
+            // bottom face
             {-1, -1, -1},
             {-1, -1, +1},
             {+1, -1, +1},
             {+1, -1, -1},
+            // top face
             {-1, +1, -1},
             {-1, +1, +1},
             {+1, +1, +1},
             {+1, +1, -1}
     };
 
-    rx += rot2;
-    ry += rot;
+    rx += rot1;
+    ry += rot2;
 
     rx = rx * 3.1415 / 180;
     ry = ry * 3.1415 / 180;
     rz = rz * 3.1415 / 180;
 
     for (int i = 0; i < 8; i++) {
-        float x = P[i][0], y = P[i][1], z = P[i][2], t;
+        float x = P[i][0];
+        float y = P[i][1];
+        float z = P[i][2];
+        float t;
 
         // scaling
         x = x * scale + tx;
@@ -118,10 +123,10 @@ void keyboard(unsigned char key, int x, int y) {
             move_x += 0.05;
             break;
         case '.':
-            rot--;
+            rot1--;
             break;
         case ',':
-            rot++;
+            rot1++;
             break;
         case '[':
             rot2--;
@@ -130,7 +135,7 @@ void keyboard(unsigned char key, int x, int y) {
             rot2++;
             break;
         case 'r':
-            move_x = move_z = rot = rot2 = 0;
+            move_x = move_y = move_z = rot1 = rot2 = 0;
             break;
         case 'q':
             exit(0);

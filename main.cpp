@@ -1,138 +1,130 @@
 /*
- * program 3: Demonstrate basic geometric operations on a 3D object
+ * program 5: 3D transformations on 3D objects (with builtin functions)
  */
 
-#include<cstdlib>
-#include<GL/glut.h>
-#include<cmath>
+#include <GL/glut.h>
+#include <iostream>
 
-double rot = 0, rot2 = 0, move_x = 0, move_y = 0, move_z = 0;
+float tx = 0, ty = 0, tz = 0;
+float scale = 1;
+float angleX = 0, angleY = 0, angleZ = 0;
 
 void init() {
-    glMatrixMode(GL_MODELVIEW);
+    glClearColor(0, 0, 0, 0);
+    gluOrtho2D(-1, 1, -1, 1);
     glEnable(GL_DEPTH_TEST);
 }
 
-void face(float P[8][3], int a, int b, int c, int d) {
+void drawCube() {
     glBegin(GL_QUADS);
-    glVertex3fv(P[a]);
-    glVertex3fv(P[b]);
-    glVertex3fv(P[c]);
-    glVertex3fv(P[d]);
+
+    // front face
+    glColor3f(1, 0, 0);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glVertex3f(-0.5, 0.5, 0.5);
+
+    // back face
+    glColor3f(0, 1, 0);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(0.5, -0.5, -0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+    glVertex3f(-0.5, 0.5, -0.5);
+
+    // left face
+    glColor3f(0, 0, 1);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, -0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+
+    // right face
+    glColor3f(1, 1, 0);
+    glVertex3f(0.5, -0.5, -0.5);
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+
+    // top face
+    glColor3f(0, 1, 1);
+    glVertex3f(-0.5, 0.5, -0.5);
+    glVertex3f(-0.5, 0.5, 0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+
+    // bottom face
+    glColor3f(1, 0, 1);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, -0.5);
+
     glEnd();
 }
 
-void cube(float tx, float ty, float tz, float rx, float ry, float rz, float scale, float c) {
-    float P[8][3] = {
-            {-1, -1, -1},
-            {-1, -1, +1},
-            {+1, -1, +1},
-            {+1, -1, -1},
-            {-1, +1, -1},
-            {-1, +1, +1},
-            {+1, +1, +1},
-            {+1, +1, -1}
-    };
-
-    rx += rot2;
-    ry += rot;
-
-    rx = rx * 3.1415 / 180;
-    ry = ry * 3.1415 / 180;
-    rz = rz * 3.1415 / 180;
-
-    for (int i = 0; i < 8; i++) {
-        float x = P[i][0], y = P[i][1], z = P[i][2], t;
-
-        // scaling
-        x = x * scale + tx;
-        y = y * scale + ty;
-        z = z * scale + tz;
-
-        // rotation
-        t = x * cos(rz) - y * sin(rz);
-        y = x * sin(rz) + y * cos(rz);
-        x = t;
-
-        t = y * cos(rx) - z * sin(rx);
-        z = y * sin(rx) + z * cos(rx);
-        y = t;
-
-        t = z * cos(ry) - x * sin(ry);
-        x = z * sin(ry) + x * cos(ry);
-        z = t;
-
-        // translation
-        P[i][0] = x + move_x;
-        P[i][1] = y + move_y;
-        P[i][2] = z + move_z;
-    }
-
-    // front face
-    glColor3f(0, c, 0);
-    face(P, 1, 2, 6, 5);
-
-    // back face
-    glColor3f(0, 0, c);
-    face(P, 3, 0, 4, 7);
-
-    // left face
-    glColor3f(c, c, 0);
-    face(P, 0, 1, 5, 4);
-
-    // right face
-    glColor3f(0, c, c);
-    face(P, 2, 3, 7, 6);
-
-    // top face
-    glColor3f(c, 0, c);
-    face(P, 4, 5, 6, 7);
-
-    // bottom face
-    glColor3f(c, 0, 0);
-    face(P, 0, 1, 2, 3);
-}
-
 void display() {
-    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glLoadIdentity();
-    cube(0, 0, 0, 0, 0, 0, 0.1, 1.0);
+
+    glTranslatef(tx, ty, tz);
+    glRotatef(angleX, 1, 0, 0);
+    glRotatef(angleY, 0, 1, 0);
+    glRotatef(angleZ, 0, 0, 1);
+    glScalef(scale, scale, scale);
+
+    drawCube();
 
     glutSwapBuffers();
 }
 
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-        case 'w':
-            move_y += 0.05;
+        case 'u':
+            tx += 0.1;
             break;
-        case 'a':
-            move_x -= 0.05;
+        case 'U':
+            tx -= 0.1;
+            break;
+        case 'v':
+            ty += 0.1;
+            break;
+        case 'V':
+            ty -= 0.1;
+            break;
+        case 't':
+            tz += 0.1;
+            break;
+        case 'T':
+            tx -= 0.1;
             break;
         case 's':
-            move_y -= 0.05;
+            scale += 0.1;
+            if (scale > 2.0)scale = 2.0;
             break;
-        case 'd':
-            move_x += 0.05;
+        case 'S':
+            scale -= 0.1;
+            if (scale < 0.1) scale = 0.1;
             break;
-        case '.':
-            rot--;
+        case 'x':
+            angleX += 5;
             break;
-        case ',':
-            rot++;
+        case 'X':
+            angleX -= 5;
             break;
-        case '[':
-            rot2--;
+        case 'y':
+            angleY += 5;
             break;
-        case ']':
-            rot2++;
+        case 'Y':
+            angleY -= 5;
             break;
-        case 'r':
-            move_x = move_z = rot = rot2 = 0;
+        case 'z':
+            angleZ += 5;
             break;
-        case 'q':
+        case 'Z':
+            angleZ -= 5;
+            break;
+        case 27:
             exit(0);
     }
     glutPostRedisplay();
@@ -142,9 +134,8 @@ int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-    glutInitWindowSize(600, 600);
-    glutInitWindowPosition(300, 300);
-    glutCreateWindow("3D Operation");
+    glutInitWindowPosition(400, 200);
+    glutCreateWindow("Basic 3D operations on a 3D object");
 
     init();
 
@@ -155,3 +146,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+

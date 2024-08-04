@@ -1,5 +1,5 @@
 /*
- * program 5: 3D transformations on 3D objects
+ * program 5: 3D transformations on 3D objects (with builtin functions)
  */
 
 #include <GL/glut.h>
@@ -132,7 +132,7 @@ void keyboard(unsigned char key, int x, int y) {
 
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
     glutInitWindowPosition(400, 200);
     glutCreateWindow("Basic 3D operations on a 3D object");
